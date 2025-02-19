@@ -1,166 +1,123 @@
-export let blocks = {
-    Control: [
-        {
-            name: "If Statement",
-            note: "if condition",
-            id: 1,
-            properties: [{ name: "Condition", value: "", save_as: "condition" }],
-            string_part2add: "if //**condition**// then"
-        },
-        {
-            name: "ElseIf Statement",
-            note: "elseif comes after the if (if needed)",
-            id: 2,
-            properties: [{ name: "Condition", value: "", save_as: "condition" }],
-            string_part2add: "elseif //**condition**// then"
-        },
-        {
-            name: "Else Statement",
-            note: "Doesn’t need any configuration",
-            id: 3,
-            properties: [],
-            string_part2add: "else"
-        },
-        {
-            name: "End (Conditions/Loops)",
-            note: "Must always be present to close conditions/loops",
-            id: 3,
-            properties: [],
-            string_part2add: "end"
-        },
-        {
-            name: "While Loop Statement",
-            note: "Loop executes while the condition is true",
-            id: 1,
-            properties: [{ name: "Condition", value: "", save_as: "condition" }],
-            string_part2add: "while //**condition**// do"
-        },
-        {
-            name: "Wait Block",
-            note: "Pause execution for a set time (must be defined)",
-            id: 1,
-            properties: [{ name: "Time (seconds)", value: "", save_as: "time" }],
-            string_part2add: "task.wait(//**time**//)"
-        }
-    ],
+// block.js
 
-    Events: [
-        {
-            name: "When a player joins",
-            note: "Works in a normal script",
-            id: 1,
-            properties: [{ name: "Function to fire", value: "", save_as: "function_name" }],
-            string_part2add: "game.Players.PlayerAdded:Connect(//**function_name**//)"
-        },
-        {
-            name: "When a player leaves",
-            note: "Works in a normal script",
-            id: 1,
-            properties: [{ name: "Function to fire", value: "", save_as: "function_name" }],
-            string_part2add: "game.Players.PlayerRemoved:Connect(//**function_name**//)"
-        },
-        {
-            name: "When a Part was Touched",
-            note: "Detect when a part is touched (e.g., game.Workspace.MyPart)",
-            id: 1,
-            properties: [
-                { name: "Part To Detect", value: "", save_as: "part" },
-                { name: "Function to fire", value: "", save_as: "function_name" }
-            ],
-            string_part2add: "//**part**//.Touched:Connect(//**function_name**//)"
-        }
-    ],
+// Fonction pour générer des caractères aléatoires (utile pour les ID des blocs)
+function generateRandomChars(length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let randomString = '';
+    
+    for (let i = 0; i < length; i++) {
+        randomString += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    return randomString;
+}
 
-    Functions: [
-        {
-            name: "Define a Function",
-            note: "Create a function",
-            id: 1,
-            properties: [
-                { name: "Function Name", value: "", save_as: "function_name" },
-                { name: "Arguments", value: "", save_as: "args" }
-            ],
-            string_part2add: "local function //**function_name**//(//**args**//)"
-        },
-        {
-            name: "Return Function Block",
-            note: "Return data as a callback",
-            id: 2,
-            properties: [{ name: "Data for callback", value: "", save_as: "data" }],
-            string_part2add: "return //**data**//"
-        },
-        {
-            name: "Call a Function",
-            note: "Call a function and define the variable to store the returned value",
-            id: 2,
-            properties: [
-                { name: "Function to fire", value: "", save_as: "function_name" },
-                { name: "Arguments", value: "", save_as: "args" },
-                { name: "Callback Variable", value: "", save_as: "variable" }
-            ],
-            string_part2add: "//**variable**// = //**function_name**//(//**args**//)"
-        },
-        {
-            name: "End (Functions)",
-            note: "Must always be present to close functions",
-            id: 3,
-            properties: [],
-            string_part2add: "end"
-        }
-    ],
+// Fonction pour créer un bloc dynamique
+function create_block(parent, block) {
+    let div = document.createElement("div");
+    div.id = generateRandomChars(30);
+    div.classList.add('block');  // Ajout de la classe block pour appliquer le style moderne
+    div.innerHTML = `
+        <div class="block-header">
+            <span class="block-name">${block.name}</span>
+            <button class="btn btn-info">Configurer</button>
+        </div>
+        <div class="block-content">
+            <p>${block.description}</p>
+        </div>
+    `;
 
-    Variables: [
-        {
-            name: "Set a Variable",
-            note: "Create and set a variable",
-            id: 2,
-            properties: [
-                { name: "Variable Name", value: "", save_as: "variableName" },
-                { name: "Value to store", value: "", save_as: "value" }
-            ],
-            string_part2add: "local //**variableName**// = //**value**//"
-        },
-        {
-            name: "Change a Variable",
-            note: "Modify the value of a variable",
-            id: 2,
-            properties: [
-                { name: "Variable Name", value: "", save_as: "variableName" },
-                { name: "New Value", value: "", save_as: "value" }
-            ],
-            string_part2add: "//**variableName**// = //**value**//"
-        }
-    ],
+    parent.appendChild(div);
+    return div;
+}
 
-    Objects: [
-        {
-            name: "Add a new Instance",
-            note: "Create a new instance and define its type and parent",
-            id: 2,
-            properties: [
-                { name: "Type Name", value: "", save_as: "type" },
-                { name: "Parent", value: "", save_as: "parent" },
-                { name: "Save On Variable", value: "", save_as: "variable" }
-            ],
-            string_part2add: "//**variable**// = Instance.new('//**type**//',//**parent**//)"
-        },
-        {
-            name: "Destroy the Instance",
-            note: "Delete an instance",
-            id: 2,
-            properties: [{ name: "Instance Variable", value: "", save_as: "variable" }],
-            string_part2add: "//**variable**//:Destroy()"
-        },
-        {
-            name: "Modify the Instance",
-            note: "Change a property of an instance",
-            id: 2,
-            properties: [
-                { name: "Instance Variable", value: "", save_as: "variable" },
-                { name: "Property Name", value: "", save_as: "property" },
-                { name: "Value", value: "", save_as: "value" }
-            ],
-            string_part2add: "//**variable**//.//**property**// = //**value**//"
-        }
-    ]
-};
+// Fonction pour ajouter un bloc au code
+function add_block_to_code(block) {
+    let code_area = document.getElementById("code_shower");
+    let div = create_block(code_area, block);
+    let scriptTag = document.createElement("script");
+    scriptTag.type = "application/json";
+    scriptTag.innerHTML = JSON.stringify(block);
+    div.appendChild(scriptTag);
+
+    div.addEventListener('click', function() {
+        select_block_and_show_configs(div.id);
+    });
+}
+
+// Sélectionner un bloc et afficher ses configurations
+function select_block_and_show_configs(block_div_id) {
+    let block_div = document.getElementById(block_div_id);
+    let scriptTag = block_div.querySelector('script[type="application/json"]');
+    let block = JSON.parse(scriptTag.innerText || scriptTag.textContent);
+    
+    let config_area = document.getElementById("configs_list");
+    clean_the_list(config_area);
+
+    let div_container = document.createElement("div");
+    div_container.classList.add('config-container');
+    div_container.innerHTML = `
+        <strong>${block.name}</strong>
+        <hr />
+        <p><strong>Note :</strong> ${block.note}</p>
+        <br />
+    `;
+    config_area.appendChild(div_container);
+
+    block.properties.forEach(one_config => {
+        let divA = document.createElement("div");
+        let labelA = document.createElement("label");
+        let inputA = document.createElement("input");
+        inputA.type = 'text';
+        inputA.value = one_config.value;
+        inputA.classList.add('input-field');  // Ajout d'une classe moderne
+        labelA.textContent = one_config.name;
+        divA.appendChild(labelA);
+        divA.appendChild(inputA);
+        config_area.appendChild(divA);
+        
+        inputA.addEventListener('input', function() {
+            block.properties.find(prop => prop.name === one_config.name).value = inputA.value;
+            scriptTag.innerHTML = JSON.stringify(block);
+        });
+    });
+
+    // Bouton de suppression
+    let deleteBtn = document.createElement("button");
+    deleteBtn.classList.add('btn', 'btn-danger');
+    deleteBtn.textContent = "Supprimer";
+    div_container.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener('click', function() {
+        block_div.remove();
+        clean_the_list(config_area);
+    });
+}
+
+// Fonction pour supprimer une liste d'éléments
+function clean_the_list(list) {
+    list.innerHTML = "";
+}
+
+// Ajouter un objet à la liste
+function add_obj_to_code() {
+    let object_list = document.getElementById("object_list");
+    clean_the_list(object_list);
+
+    Object.keys(blocks).forEach(key => {
+        let div_container = document.createElement("div");
+        div_container.classList.add('object-container');
+        div_container.innerHTML = `
+            <strong>${key}</strong>
+            <hr />
+        `;
+        document.getElementById("object_list").appendChild(div_container);
+
+        blocks[key].forEach(block => {
+            let div = create_block(object_list, block);
+            div.addEventListener('click', function() {
+                add_block_to_code(block);
+            });
+        });
+    });
+}
